@@ -1,0 +1,52 @@
+body
+{
+    background-color: blueviolet;
+}
+td
+{
+    border: black solid 2px;
+    padding: 10px 20px;
+}
+table
+{
+    border: black solid 5px;
+    margin: auto;
+    background-color: azure;
+}
+h1
+{
+    text-align: center;
+}
+img
+{
+    display: block;
+}
+.big
+{
+    font-size: 18px;
+}
+.huge
+{
+    font-size: 36px;
+    text-align: center;
+    font-weight: bold;
+    background-color: orchid;
+}
+.bold
+{
+    font-weight: bold;
+}
+.column
+{
+    float: left;
+}
+.row:after 
+{
+    content: "";
+    display: table;
+    clear: both;
+}
+.noborders table, .noborders td
+{
+    border: 0;
+}

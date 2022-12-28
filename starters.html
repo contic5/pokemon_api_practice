@@ -1,0 +1,241 @@
+<html>
+<head>
+  <link href="mystyle.css" type='text/css' rel='stylesheet'>
+</head>
+<body>
+<h1>Pokémon Info</h1>
+<table>
+<tbody id="results">
+
+</tbody>
+</table>
+
+<script src="https://unpkg.com/pokeapi-js-wrapper/dist/index.js"></script>
+<script>
+const P = new Pokedex.Pokedex();
+//let results=document.getElementById("results");
+
+/*
+P.resource([
+  "/api/v2/pokemon/36",
+  "api/v2/berry/8",
+  "https://pokeapi.co/api/v2/ability/9/",
+]).then( response => {
+  console.log(response)
+});
+
+P.getPokemonSpeciesByName(25).then(function(response) {
+  console.log(response)
+})
+*/
+
+function displayPokemon(response,curgenname,startinterval)
+{
+    let index=0;
+    console.log(response);
+    let results=document.getElementById("results");
+    let cur_row=null;
+
+    let gentr=document.createElement("tr");
+    let gentd=document.createElement("td");
+    gentd.classList.add("huge");
+    gentd.colSpan=3;
+    gentd.innerHTML=curgenname;
+    results.appendChild(gentd);
+    for(let pokemon of response)
+    {
+        if(pokemon.id==810)
+        {
+          //console.log("Getting Pokemon stats for "+pokemon.name);
+          //console.log(pokemon.stats);
+          let abilitiestest=pokemon.abilities;
+          console.log(abilitiestest);
+          for(let abilitytest of abilitiestest)
+          {
+            console.log(abilitytest);
+            console.log(abilitytest.is_hidden);
+          }
+        }
+        if(index%3==0)
+        {
+          cur_row=document.createElement("tr");
+        }
+        let cur_td=document.createElement("td");
+        let name=pokemon.name;
+        name=name[0].toUpperCase()+name.substring(1,name.length);
+        
+        let front_default=pokemon.sprites.front_default;
+        let front_defaultelem=document.createElement("img");
+        front_defaultelem.src=front_default;
+        cur_td.appendChild(front_defaultelem);
+
+        let nameelem=document.createElement("p");
+        nameelem.classList.add("big");
+        nameelem.classList.add("bold");
+        nameelem.innerHTML="#"+(startinterval+1+index)+": "+name;
+        cur_td.appendChild(nameelem);
+
+        let types=pokemon.types;
+        let typestext="Types: ";
+        let typeindex=0;
+        if(types.length==1)
+        {
+          typestext="Type: ";
+        }
+        for(let type of types)
+        {
+          let typename=type.type.name;
+          typename=typename[0].toUpperCase()+typename.substring(1,typename.length);
+          typestext+=typename;
+          if(typeindex!=types.length-1)
+          {
+            typestext+=", ";
+          }
+
+          typeindex+=1;
+        }
+        let typeselem=document.createElement("p");
+        typeselem.innerHTML=typestext;
+        cur_td.appendChild(typeselem);
+
+        let abilities=pokemon.abilities;
+        let abilitiestext="Abilities: ";
+        let abilityindex=0;
+        if(abilities.length==1)
+        {
+          abilitiestext="Ability: "
+        }
+        for(let ability of abilities)
+        {
+          let abilityname=ability.ability.name;
+          let abilitywords=abilityname.split("-");
+          for(let j=0;j<abilitywords.length;j++)
+          {
+            abilitywords[j]=abilitywords[j][0].toUpperCase()+abilitywords[j].substring(1,abilitywords[j].length);
+          }
+          abilityname=abilitywords.join(" ");
+          if(ability.is_hidden)
+          {
+            abilitiestext+="<b>"+abilityname+"</b>";
+          }
+          else
+          {
+            abilitiestext+=abilityname+"";
+          }
+
+          if(abilityindex!=abilities.length-1)
+          {
+            abilitiestext+=", ";
+          }
+          abilityindex+=1;
+        }
+        let abilitieselem=document.createElement("p");
+        abilitieselem.innerHTML=abilitiestext;
+        cur_td.appendChild(abilitieselem);
+
+        let statelem=document.createElement("p");
+
+        let stats=pokemon.stats;
+
+        for(let stat of stats)
+        {
+          let statsholder=document.createElement("div");
+          statsholder.classList.add("row");
+
+          let statnameelem=document.createElement("div");
+          statnameelem.classList.add("column");
+          statnameelem.style.width="110px";
+
+          let statnumberelem=document.createElement("div");
+          statnumberelem.classList.add("column");
+          statnumberelem.style.width="40px";
+
+          let barelem=document.createElement("div");
+          barelem.classList.add("column");
+
+          let statname=stat.stat.name;
+          statname=statname[0].toUpperCase()+statname.substring(1,statname.length);
+          statname=statname.replace("Hp","HP");
+          statname=statname.replace("Special-attack","Special Attack");
+          statname=statname.replace("Special-defense","Special Defense");
+
+          let curcolor="";
+          for(let i=0;i<colors.length;i++)
+          {
+            if(stat.base_stat>=ranges[i])
+            {
+              curcolor=colors[i];
+            }
+          }
+
+          barelem.style.minHeight=30;
+          barelem.style.width=stat.base_stat*2;
+          barelem.style.backgroundColor=curcolor;
+
+          statnameelem.innerHTML=statname+":";
+          statnumberelem.innerHTML=stat.base_stat;
+
+          statsholder.appendChild(statnameelem);
+          statsholder.appendChild(statnumberelem);
+          statsholder.appendChild(barelem);
+          cur_td.appendChild(statsholder);
+        }
+        cur_row.appendChild(cur_td);
+
+        if(index%3==2)
+        {
+          results.appendChild(cur_row);
+        }
+        index+=1;
+    }
+}
+
+const intervals = 
+[
+{offset: 0,limit: 9,},
+{offset: 151,limit: 9,},
+{offset: 251,limit: 9,},
+{offset: 386,limit: 9,},
+{offset: 494,limit: 9,},
+{offset: 649,limit: 9,},
+{offset: 721,limit: 9,},
+{offset: 809,limit: 9,},
+];
+let gennames=["Kanto","Johto","Hoen","Sinoh","Unova","Kalos","Alola","Galar"];
+
+let ranges=[0,30,60,90,120,150];
+let colors=["#ff0000","#ffae00","fbff00","#66ff00","#00d9ff","#0059ff"];
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function getInfo()
+{
+  for(let i=0;i<8;i++)
+  {
+    let interval=intervals[i];
+    let startinterval=interval.offset;
+    let genname=gennames[i];
+    P.getPokemonsList(interval).then(function(response) {
+      console.log(response)
+      let results=response.results;
+      let urls=[];
+      for(let result of results)
+      {
+        urls.push(result.url)
+      }
+
+      console.log(urls);
+      P.resource(urls).then(function(response2) {
+        displayPokemon(response2,genname,startinterval);
+      })
+    })
+
+    await sleep(200);
+  }
+}
+getInfo();
+</script>
+</body>
+</html>
